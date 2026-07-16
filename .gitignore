@@ -1,0 +1,40 @@
+# ---- Secrets: NEVER commit these ----
+.env
+.env.*
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# ---- Virtual environments ----
+venv/
+.venv/
+env/
+ENV/
+
+# ---- Jupyter notebook checkpoints ----
+.ipynb_checkpoints/
+
+# ---- Datasets & trained models (keep large files out of Git) ----
+# Put your datasets inside the data/ folder so they stay untracked
+data/
+*.pkl
+*.joblib
+*.h5
+
+# ---- Web dashboard (Node.js) ----
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+
+# ---- IDE / editor settings ----
+.vscode/
+.idea/
+*.swp
+
+# ---- OS junk files ----
+.DS_Store
+Thumbs.db
