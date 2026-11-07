@@ -1,0 +1,55 @@
+.header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:#fff;
+    padding:20px 30px;
+    border-bottom:1px solid #E2E8F0;
+}
+
+.header-left h1{
+    margin:0;
+    font-size:28px;
+    color:#1E293B;
+}
+
+.header-left p{
+    margin-top:4px;
+    font-size:14px;
+    color:#64748B;
+}
+
+.header-right{
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.icon-button{
+    width:42px;
+    height:42px;
+    border:none;
+    background:#F8FAFC;
+    border-radius:12px;
+    cursor:pointer;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    position:relative;
+    transition:0.3s;
+}
+
+.icon-button:hover{
+    background:#E2E8F0;
+}
+
+.notification-dot{
+    width:9px;
+    height:9px;
+    background:#EF4444;
+    border-radius:50%;
+    position:absolute;
+    top:8px;
+    right:8px;
+    border:2px solid white;
+}

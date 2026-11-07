@@ -1,0 +1,58 @@
+.chart-switch{
+
+    display:flex;
+
+    align-items:center;
+
+    width:fit-content;
+
+    margin-top:22px;
+
+    margin-bottom:24px;
+
+    background:#ECECEC;
+
+    border-radius:14px;
+
+    overflow:hidden;
+    margin-left: 28px;
+
+}
+
+.switch-btn{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    border:none;
+
+    background:transparent;
+
+    padding:14px 28px;
+
+    font-size:18px;
+
+    font-weight:600;
+
+    color:#555;
+
+    cursor:pointer;
+
+    transition:.25s;
+}
+
+.switch-btn:hover{
+
+    background:#E3E3E3;
+
+}
+
+.switch-btn.active{
+
+    background:#D9F2DF;
+    color:#2E7D32;
+
+}

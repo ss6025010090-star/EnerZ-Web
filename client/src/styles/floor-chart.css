@@ -1,0 +1,252 @@
+
+.floor-comparison-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  
+  .floor-title-icon {
+    font-size: 30px;
+    color: #0875C9;
+    flex-shrink: 0;
+    
+    
+  }
+  
+  .background {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #0875c94e;
+    border-radius: 5px;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+  }
+  .floor-title-text h2 {
+    font-size: 21px;
+    font-weight: 700;
+    margin: 0 0 7px;
+    color: #263238;
+  }
+  
+  .floor-title-text p {
+    color: #0875C9;
+    font-size: 13px;
+    font-weight: 600;
+    margin: 0;
+  }
+  
+  .floor-bar-section {
+    background: white;
+    border: 1px solid #E5E7EB;
+    border-radius: 14px;
+    padding: 22px;
+    margin-bottom: 22px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  }
+
+  .floor-bar-section .recharts-wrapper,
+.floor-bar-section .recharts-surface {
+  background: transparent !important;
+}
+
+.floor-bar-section .recharts-cartesian-grid-bg {
+  fill: transparent !important;
+}
+
+.floor-bar-section .recharts-bar-background-rectangle {
+  display: none !important;
+}
+  
+  .floor-bar-section h3,
+  .floor-chart-card h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #263238;
+    margin: 0 0 20px;
+  }
+  
+  .floor-charts {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 22px;
+  }
+  
+  .floor-chart-card {
+    background: white;
+    border: 1px solid #E5E7EB;
+    border-radius: 14px;
+    padding: 22px;
+    min-width: 0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  }
+  
+  .floor-usage-list {
+    margin-top: 15px;
+  }
+  
+  .floor-usage-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 0;
+    border-bottom: 1px solid #F1F5F9;
+    font-size: 13px;
+  }
+  
+  .floor-usage-item strong {
+    margin-left: auto;
+    white-space: nowrap;
+  }
+  
+  .floor-color-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  
+  .top-floor-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 14px;
+    padding: 22px;
+    min-height: 380px;
+  }
+  
+  .top-floor-card h3 {
+    margin-bottom: 25px;
+  }
+
+  .top-floor-content {
+    flex: 1;
+    padding: 10px 5px;
+  }
+  
+  
+  
+  
+.top-floor-content h2 {
+  color: #6eb65a;
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 25px;
+}
+  
+.top-floor-content h1 {
+    color: #263238;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 25px;
+}
+  
+.top-floor-content p {
+    color: #5c6065;
+    font-size: 14px;
+    margin-bottom: 35px;
+}
+  
+.top-floor-insight {
+    background: #5f82b431;
+    
+    border-radius: 8px;
+    padding: 16px;
+    color: #5c6065;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  
+  .top-floor-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #E5E7EB;
+    padding-top: 18px;
+    margin-top: 20px;
+    gap: 10px;
+    font-size: 13px;
+    color: #64748B;
+  }
+  
+  .top-floor-total strong {
+    color: #263238;
+    font-size: 16px;
+  }
+  
+  @media (max-width: 900px) {
+    .floor-charts {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  @media (max-width: 600px) {
+    .floor-comparison {
+      padding: 15px;
+    }
+  
+    .floor-bar-section,
+    .floor-chart-card {
+      padding: 15px;
+    }
+  
+    .floor-usage-item {
+      gap: 6px;
+      font-size: 11px;
+    }
+  
+    .top-floor-content h1 {
+      font-size: 25px;
+    }
+  }
+  
+
+  /* Usage Distribution Layout */
+.floor-distribution-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .floor-distribution-content .recharts-responsive-container {
+    min-width: 0;
+  }
+  
+  .floor-usage-list {
+    margin-top: 0;
+    padding: 0 5px;
+  }
+  
+  .floor-usage-item {
+    display: grid;
+    grid-template-columns: 12px 1fr auto;
+    align-items: center;
+    gap: 8px;
+    padding: 15px 0;
+    border-bottom: none;
+    font-size: 13px;
+  }
+  
+  .floor-usage-item strong {
+    grid-column: 2;
+    margin-left: 0;
+    font-size: 13px;
+  }
+  
+  .floor-usage-item > span:last-child {
+    grid-column: 3;
+    grid-row: 2;
+    color: #777;
+    font-weight: 600;
+  }
+  
+  @media (max-width: 600px) {
+    .floor-distribution-content {
+      grid-template-columns: 1fr;
+    }
+  }

@@ -1,0 +1,66 @@
+.chart-container {
+    width: 100%;
+    margin-top: 20px;
+
+    background: white;
+
+    border-radius: 15px;
+
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+    overflow: hidden;
+
+    box-sizing: border-box;
+}
+
+.chart-tabs{
+
+    display:flex;
+
+    gap:35px;
+
+    padding:18px 25px;
+
+    border-bottom:1px solid #E5E7EB;
+
+}
+
+.tab{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    background:none;
+
+    border:none;
+
+    cursor:pointer;
+
+    font-size:17px;
+
+    font-weight:600;
+
+    color:#64748B;
+
+    padding-bottom:12px;
+
+}
+
+.tab.active{
+
+    color:#2E7D32;
+
+    border-bottom:3px solid #2E7D32;
+
+}
+
+.chart-body{
+
+    padding:40px;
+
+    min-height:450px;
+
+}

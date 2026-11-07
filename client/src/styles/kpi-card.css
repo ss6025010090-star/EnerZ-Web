@@ -1,0 +1,96 @@
+.kpi-card {
+
+    background: white;
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    transition: 0.25s;
+    height: 120px;
+
+}
+
+
+.kpi-card:hover {
+
+    transform: translateY(-3px);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+
+}
+
+
+
+
+.kpi-icon {
+
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+
+}
+
+
+
+
+
+.kpi-right h4 {
+
+    margin: 0;
+    font-size: 13px;
+    color: #64748b;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+}
+
+
+
+.kpi-right h2 {
+
+    margin: 5px 0;
+    font-size: 26px;
+    color: #1565C0;
+    font-weight: 700;
+   
+}
+
+
+
+.kpi-right h2 span {
+
+    font-size: 14px;
+    color: #64748B;
+    font-weight: 500;
+    margin-bottom: 2px;
+
+}
+
+
+
+.kpi-badge {
+
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: fit-content;
+    max-width: 100%;
+    background: #E8F5E9;
+    color: #2E7D32;
+
+}
+
+

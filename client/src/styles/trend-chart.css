@@ -1,0 +1,145 @@
+.chart-container {
+
+    width: 100%;
+  
+    background: white;
+  
+    border-radius: 0 0 15px 15px;
+  
+    overflow: hidden;
+  
+  }
+  
+  
+  
+  
+  .chart-block {
+  
+    padding: 25px 30px 15px;
+  
+    border-bottom: 1px solid #E5E7EB;
+  
+  }
+  
+  .chart-block:last-child {
+  
+    border-bottom: none;
+  
+  }
+  
+  
+  
+  
+  .chart-title {
+  
+    display: flex;
+  
+    align-items: center;
+  
+    gap: 12px;
+  
+    margin-bottom: 15px;
+  
+  }
+  
+  
+  .chart-title h3 {
+  
+    margin: 0;
+  
+    font-size: 18px;
+  
+    font-weight: 700;
+  
+    color: #1F2937;
+  
+  }
+  
+  
+  .chart-title span {
+  
+    display: block;
+  
+    margin-top: 4px;
+  
+    font-size: 14px;
+  
+    font-weight: 600;
+  
+    color: #1565C0;
+  
+  }
+  
+  
+  
+  
+  .chart-icon {
+  
+    width: 42px;
+  
+    height: 42px;
+  
+    border-radius: 5px;
+  
+    display: flex;
+  
+    align-items: center;
+  
+    justify-content: center;
+  
+    font-size: 22px;
+  
+    font-weight: bold;
+  
+  }
+  
+  
+  .usage-icon {
+  
+    background: #D9ECFF;
+  
+    color: #1565C0;
+  
+  }
+  
+  
+  .cost-icon {
+  
+    background: #DDEFD9;
+  
+    color: #4F8A38;
+  
+    font-size: 24px;
+  
+  }
+  
+  
+  
+  
+  .chart-wrapper {
+  
+    width: 100%;
+  
+    height: 350px;
+  
+  }
+  
+  
+  
+  
+  .chart-loading,
+  .chart-empty {
+  
+    height: 300px;
+  
+    display: flex;
+  
+    justify-content: center;
+  
+    align-items: center;
+  
+    color: #64748B;
+  
+    font-size: 16px;
+  
+  }
