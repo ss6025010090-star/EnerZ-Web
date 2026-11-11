@@ -31,7 +31,10 @@ function FloorChart({ selectedMonth }) {
         setError("");
 
         const data = await getFloorComparison(selectedMonth);
-        setFloorData(data);
+
+        setFloorData(
+        Array.isArray(data) ? data[0] ?? null : data
+        );
       } catch (err) {
         setError("Unable to load floor comparison data.");
         setFloorData(null);

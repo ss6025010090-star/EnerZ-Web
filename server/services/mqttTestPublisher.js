@@ -19,36 +19,53 @@ export const startMqttTestPublisher = () => {
 
   const generateReading = (floorNumber) => {
     const floor = floorData[floorNumber];
-
-    const current = Number((0.3 + Math.random() * 0.4).toFixed(2));
-    const power = Number((floor.voltage * current).toFixed(2));
-
+  
+    // Generate light readings for each floor
+    const deviceCodes =
+      floorNumber === 1
+        ? ["LT-1", "LT-2"]
+        : ["LT-3"];
+  
+    const lights = deviceCodes.map((deviceCode) => {
+      const status = Math.random() > 0.5 ? "ON" : "OFF";
+  
+      const power =
+        status === "ON"
+          ? Number((0.0425 + Math.random() * 0.005).toFixed(4))
+          : 0;
+  
+      return {
+        deviceCode,
+        status,
+        power,
+      };
+    });
+  
+    // Calculate total power from all lights
+    const totalLightPower = lights.reduce(
+      (sum, light) => sum + light.power,
+      0
+    );
+  
+    // Convert kW to W
+    const power = Number((totalLightPower * 1000).toFixed(2));
+  
+    // Calculate current using power and voltage
+    const current = Number((power / floor.voltage).toFixed(3));
+  
+    // Calculate energy increase
     const energyIncrease =
       (power / 1000) * (PUBLISH_INTERVAL / 3600000);
-
+  
     floor.meterEnergy += energyIncrease;
-
+  
     return {
-        floorNumber,
-        voltage: floor.voltage,
-        current,
-        power,
-        energy: Number(floor.meterEnergy.toFixed(4)),
-      
-        ...(floorNumber === 1 && {
-          lights: [
-            {
-              deviceCode: "LT-1",
-              status: Math.random() > 0.5 ? "ON" : "OFF",
-              power: 0.040,
-            },
-            {
-              deviceCode: "LT-2",
-              status: Math.random() > 0.5 ? "ON" : "OFF",
-              power: 0.040,
-            },
-          ],
-        }),
+      floorNumber,
+      voltage: floor.voltage,
+      current,
+      power,
+      energy: Number(floor.meterEnergy.toFixed(4)),
+      lights,
     };
   };
 

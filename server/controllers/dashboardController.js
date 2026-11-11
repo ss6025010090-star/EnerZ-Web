@@ -95,6 +95,8 @@ export const getKPI = async (req, res) => {
   }
 };
 
+
+
 export const getTrends = async (req, res) => {
   try {
     const { year } = req.query;
@@ -106,16 +108,10 @@ export const getTrends = async (req, res) => {
       });
     }
 
-    let startDate;
-    let endDate;
-
-    if (selectedYear === 2026) {
-      startDate = "2025-08-01";
-      endDate = "2026-08-31";
-    } else {
-      startDate = `${selectedYear}-01-01`;
-      endDate = `${selectedYear}-12-31`;
-    }
+    // Get the 12-month period:
+    // December of the previous year to November of the selected year
+    const startDate = `${selectedYear - 1}-12-01`;
+    const endDate = `${selectedYear}-12-01`;
 
     const result = await pool.query(
       `
@@ -128,20 +124,25 @@ export const getTrends = async (req, res) => {
         "Status" AS status
       FROM public.electricity_usage_data
       WHERE "Period_Start" >= $1
-        AND "Period_Start" <= $2
+        AND "Period_Start" < $2
       ORDER BY "Period_Start" ASC
       `,
       [startDate, endDate]
     );
 
     res.status(200).json(result.rows);
+
   } catch (error) {
-    console.error(error);
+    console.error("Get trends error:", error);
+
     res.status(500).json({
       message: "Failed to fetch trend data."
     });
   }
 };
+
+
+
 
 export const getFloorComparison = async (req, res) => {
   try {
@@ -167,8 +168,10 @@ export const getFloorComparison = async (req, res) => {
     }
 
     res.status(200).json(result.rows[0]);
+
   } catch (error) {
-    console.error(error);
+    console.error("Floor comparison error:", error);
+
     res.status(500).json({
       message: "Failed to fetch floor comparison."
     });

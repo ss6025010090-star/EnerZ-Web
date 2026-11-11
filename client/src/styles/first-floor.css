@@ -88,48 +88,62 @@
     font-size: 16px;
   }
   
-  .live-monitoring-badge,
-  .sensor-online {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    flex-shrink: 0;
-    white-space: nowrap;
-    font-size: 12px;
-    font-weight: 600;
-  }
   
-  .live-monitoring-badge {
-    padding: 8px 11px;
-    color: #16834F;
-    background: #E8F8EF;
-    border-radius: 20px;
-  }
-  
-  .live-indicator,
-  .online-dot {
-    width: 8px;
-    height: 8px;
-    flex-shrink: 0;
-    border-radius: 50%;
-  }
-  
-  .online-dot {
-    background: #16A36A;
-  }
-  
-  .sensor-online {
-    color: #16834F;
-  }
-  
-  .sensor-online.offline {
-    color: #DC2626;
-  }
-  
-  .sensor-online.offline .online-dot {
-    background: #DC2626;
-  }
-  
+.live-monitoring-badge,
+.sensor-online {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.live-monitoring-badge {
+  padding: 8px 11px;
+  color: #16834F;
+  background: #E8F8EF;
+  border-radius: 20px;
+}
+
+.live-indicator,
+.online-dot {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  border-radius: 50%;
+}
+
+.online-dot {
+  background: #16A36A;
+}
+
+.sensor-online {
+  color: #16834F;
+}
+
+.sensor-online.offline {
+  color: #DC2626;
+}
+
+.sensor-online.offline .online-dot {
+  background: #DC2626;
+}
+
+/* Three status colors */
+.live-indicator.online {
+  background: #16A36A;
+}
+
+.live-indicator.offline {
+  background: #DC2626;
+}
+
+.live-indicator.waiting {
+  background: #F59E0B;
+}
+
   
   
   .loading-message,

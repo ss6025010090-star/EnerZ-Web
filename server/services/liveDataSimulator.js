@@ -2,7 +2,8 @@
 import pool from "../config/db.js";
 
 const UPDATE_INTERVAL = 5 * 60 * 1000; // 5 minutes
-const LIGHT_POWER = 0.045;
+const LIGHT_POWER_MIN = 0.0425;
+const LIGHT_POWER_MAX = 0.0475;
 
 const floors = [
   {
@@ -116,12 +117,25 @@ async function generateFloorReading(floor) {
     }
   }
 
-  const lightData = floor.devices.map((device) => ({
-    device,
-    status: floor.lights[device],
-    power:
-      floor.lights[device] === "ON" ? LIGHT_POWER : 0,
-  }));
+  const lightData = floor.devices.map((device) => {
+    const status = floor.lights[device];
+  
+    const power =
+      status === "ON"
+        ? Number(
+            (
+              LIGHT_POWER_MIN +
+              Math.random() * (LIGHT_POWER_MAX - LIGHT_POWER_MIN)
+            ).toFixed(4)
+          )
+        : 0;
+  
+    return {
+      device,
+      status,
+      power,
+    };
+  });
 
   const totalPower = lightData.reduce(
     (sum, light) => sum + light.power,
@@ -188,8 +202,11 @@ async function generateFloorReading(floor) {
     floor.lastGeneratedAt = now;
 
     console.log(
-      `Floor ${floor.floorNumber}: ${totalPower} kW`
+        `Floor ${floor.floorNumber}:`,
+        lightData.map((light) => `${light.device}=${light.status} (${light.power} kW)`).join(", "),
+        `Total Power=${totalPower.toFixed(4)} kW`
     );
+    
   } catch (error) {
     await client.query("ROLLBACK");
     console.error("Error saving floor reading:", error);

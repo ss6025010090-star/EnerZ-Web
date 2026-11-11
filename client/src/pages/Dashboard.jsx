@@ -25,18 +25,17 @@ function Dashboard() {
 
   const months = {
     2026: [
-      "Aug-25",
-      "Sep-25",
-      "Oct-25",
-      "Nov-25",
-      "Dec-25",
       "Jan-26",
       "Feb-26",
       "Mar-26",
       "Apr-26",
       "May-26",
       "Jun-26",
-      "Jul-26"
+      "Jul-26",
+      "Aug-26",
+      "Sep-26",
+      "Oct-26",
+      "Nov-26"
     ],
 
     2025: [
@@ -87,7 +86,7 @@ function Dashboard() {
 
   const [selectedYear, setSelectedYear] = useState("2026");
 
-  const [selectedMonth, setSelectedMonth] = useState("Jul-26");
+  const [selectedMonth, setSelectedMonth] = useState("Nov-26");
 
   const [kpiData, setKpiData] = useState(null);
 
@@ -131,11 +130,7 @@ function Dashboard() {
 
                 setSelectedYear(year);
 
-                if (year === "2026") {
-                  setSelectedMonth("Jul-26");
-                } else {
-                  setSelectedMonth(`Jan-${year.slice(2)}`);
-                }
+                setSelectedMonth(`Jan-${year.slice(2)}`);
               }}
             >
 

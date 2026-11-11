@@ -97,14 +97,16 @@ function FirstFloor() {
   }, []);
 
   // Get the two light statuses from the latest reading.
-  const lights = useMemo(() => {
+  
+// Get the two light statuses from the latest reading.
+const lights = useMemo(() => {
     const latestLights = latestReading?.lights ?? [];
-
+  
     return ["LT-1", "LT-2"].map((deviceCode, index) => {
       const light = latestLights.find(
         (item) => item.deviceCode === deviceCode
       );
-
+  
       return {
         deviceCode,
         name: `Light ${index + 1}`,
@@ -113,6 +115,7 @@ function FirstFloor() {
       };
     });
   }, [latestReading]);
+  
 
   const lightsOn = lights.filter(
     (light) => light.status === "ON"
@@ -313,7 +316,7 @@ const totalDayDuration = dayEnd.getTime() - dayStart.getTime();
               </div>
 
               <div className="live-monitoring-badge">
-                <span className="live-indicator"></span>
+                <span className="live-indicator online"></span>
                 Live Monitoring
               </div>
             </div>

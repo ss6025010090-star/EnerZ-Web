@@ -22,7 +22,7 @@ function Sidebar() {
   return (
     <aside className="sidebar">
 
-      {/* Logo */}
+      
 
       <div className="logo">
 
@@ -35,7 +35,7 @@ function Sidebar() {
 
       </div>
 
-      {/* Menu */}
+     
 
       <nav className="sidebar-menu">
 

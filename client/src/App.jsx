@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Dashboard from "./pages/Dashboard";
 import FirstFloor from "./pages/FirstFloor";
+import SecondFloor from "./pages/SecondFloor"; 
 
 function App() {
   return (
@@ -14,7 +15,7 @@ function App() {
 
         <Route
           path="/second-floor"
-          element={<h1></h1>}
+          element={<SecondFloor />}
         />
 
       </Routes>
