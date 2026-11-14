@@ -16,31 +16,56 @@ const floorEnergyData = {
     },
 };
 
+
 const restoreFloorEnergyData = async () => {
     const result = await pool.query(`
-      SELECT DISTINCT ON (floor_number)
+      SELECT
         floor_number,
-        meter_energy,
-        (recorded_at AT TIME ZONE 'Asia/Phnom_Penh')::date AS reading_date
+        MIN(recorded_at) AS first_recorded_at,
+        (ARRAY_AGG(meter_energy ORDER BY recorded_at ASC))[1]
+          AS first_energy,
+        (ARRAY_AGG(meter_energy ORDER BY recorded_at DESC))[1]
+          AS latest_energy,
+        TO_CHAR(
+          (MAX(recorded_at) AT TIME ZONE 'Asia/Phnom_Penh')::date,
+          'YYYY-MM-DD'
+        ) AS reading_date
       FROM floor_live_readings
       WHERE meter_energy IS NOT NULL
         AND (recorded_at AT TIME ZONE 'Asia/Phnom_Penh')::date =
             (NOW() AT TIME ZONE 'Asia/Phnom_Penh')::date
-      ORDER BY floor_number, recorded_at ASC
+      GROUP BY floor_number
     `);
   
     for (const row of result.rows) {
-      const floorData = floorEnergyData[row.floor_number];
+      const floorDataItem = floorEnergyData[row.floor_number];
   
-      floorData.firstEnergy = Number(row.meter_energy);
-      floorData.readingDate = new Date(row.reading_date)
-        .toLocaleDateString("en-CA", {
-            timeZone: "Asia/Phnom_Penh",
-        });
+      if (!floorDataItem) continue;
+  
+      const firstEnergy = Number(row.first_energy);
+      const latestEnergy = Number(row.latest_energy);
+  
+      // If the latest reading is lower than the first,
+      // the simulated meter counter has gone backwards.
+      const meterWasReset = latestEnergy < firstEnergy;
+  
+      floorDataItem.firstEnergy = meterWasReset
+        ? latestEnergy
+        : firstEnergy;
+  
+      floorDataItem.energyToday = 0;
+      floorDataItem.readingDate = row.reading_date;
+  
+      console.log(
+        `Floor ${row.floor_number}:`,
+        `Starting energy = ${floorDataItem.firstEnergy}`,
+        meterWasReset ? "(reset detected)" : "(normal)"
+      );
     }
   
     console.log("Today's energy baseline restored from database.");
-};
+  };
+  
 
 
 export const startMqttService = () => {

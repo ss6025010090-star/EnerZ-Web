@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import Sidebar from "../components/dashboard/Sidebar";
 import Header from "../components/dashboard/Header";
 import {
-  MdFlashOn,
+  MdBolt,
   MdDevices,
   MdLightbulb,
   MdLightbulbOutline,
@@ -39,6 +39,7 @@ function SecondFloor() {
     
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [backendStatus, setBackendStatus] = useState("connecting");
     const [hoveredPoint, setHoveredPoint] = useState(null);
     const [tooltipPosition, setTooltipPosition] = useState({
     x: 0,
@@ -96,6 +97,38 @@ function SecondFloor() {
     };
   }, []);
 
+
+  // Check backend connection every 5 seconds.
+useEffect(() => {
+  let isMounted = true;
+
+  const checkBackend = async () => {
+    try {
+      const response = await fetch("http://localhost:3001/api/health");
+
+      if (!response.ok) {
+        throw new Error("Backend is unavailable");
+      }
+
+      if (isMounted) {
+        setBackendStatus("online");
+      }
+    } catch (error) {
+      if (isMounted) {
+        setBackendStatus("offline");
+      }
+    }
+  };
+
+  checkBackend();
+
+  const interval = setInterval(checkBackend, 5000);
+
+  return () => {
+    isMounted = false;
+    clearInterval(interval);
+  };
+}, []);
   // Get the two light statuses from the latest reading.
   
 // Get the LT-3 status from the latest reading.
@@ -315,9 +348,14 @@ const totalDayDuration = dayEnd.getTime() - dayStart.getTime();
                 </div>
               </div>
 
-              <div className="live-monitoring-badge">
-                <span className="live-indicator online"></span>
-                Live Monitoring
+              <div className={`live-monitoring-badge ${backendStatus}`}>
+                <span className={`live-indicator ${backendStatus}`}></span>
+
+                {backendStatus === "online"
+                  ? "Live Monitoring"
+                  : backendStatus === "offline"
+                  ? "Server Offline"
+                  : "Connecting..."}
               </div>
             </div>
 
@@ -335,11 +373,11 @@ const totalDayDuration = dayEnd.getTime() - dayStart.getTime();
 
               <div
                 className={`sensor-online ${
-                  error || !latestReading ? "offline" : "online"
+                  backendStatus === "online" ? "online" : "offline"
                 }`}
               >
                 <span className="online-dot"></span>
-                {error || !latestReading ? "Disconnected" : "Connected"}
+                {backendStatus === "online" ? "Connected" : "Disconnected"}
               </div>
             </div>
 
@@ -350,7 +388,7 @@ const totalDayDuration = dayEnd.getTime() - dayStart.getTime();
 
             <div className="floor-kpi-card">
               <div className="kpi-icon power-icon">
-                <MdFlashOn />
+              <MdBolt />
               </div>
 
               <div>
@@ -386,7 +424,7 @@ const totalDayDuration = dayEnd.getTime() - dayStart.getTime();
 
             <div className="floor-kpi-card">
               <div className="kpi-icon energy-icon">
-                <MdFlashOn />
+              <MdBolt />
               </div>
 
               <div>

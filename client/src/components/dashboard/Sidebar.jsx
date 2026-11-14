@@ -18,6 +18,8 @@ import {
   HiOutlineChartBar
 } from "react-icons/hi";
 
+import logo from "../../assets/logo.svg";
+
 function Sidebar() {
   return (
     <aside className="sidebar">
@@ -28,7 +30,13 @@ function Sidebar() {
 
        
 
-        <div>
+        <div className="header-brand">
+        <img
+          src={logo}
+          alt="Logo"
+          className="header-logo"
+        />
+
           <h2>EnerZ</h2>
           
         </div>
@@ -94,21 +102,12 @@ function Sidebar() {
             AI Insight
           </p>
 
-          <button className="menu-item">
-
+          <NavLink to="/ai-forecasting" className="menu-item">
             <RiRobot2Line className="icon"/>
-
             <span>AI Forecasting</span>
+          </NavLink>
 
-          </button>
-
-          <button className="menu-item">
-
-            <HiOutlineChartBar className="icon"/>
-
-            <span>Prediction History</span>
-
-          </button>
+          
 
         </div>
 
