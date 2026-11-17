@@ -7,6 +7,7 @@ import SecondFloor from "./pages/SecondFloor";
 import AIForecasting from "./pages/AIForecasting";
 
 import Login from "./pages/Login";
+import ActionPlans from "./pages/ActionPlans";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -14,10 +15,10 @@ function App() {
     <BrowserRouter>
       <Routes>
 
-        {/* Login page */}
+        
         <Route path="/login" element={<Login />} />
 
-        {/* Protected dashboard pages */}
+        
         <Route
           path="/"
           element={
@@ -45,7 +46,7 @@ function App() {
           }
         />
 
-        {/* AI Forecasting page */}
+       
         <Route
           path="/ai-forecasting"
           element={
@@ -55,7 +56,17 @@ function App() {
           }
         />
 
-        {/* Unknown routes */}
+        <Route 
+          path="/action-plans" 
+          element={
+            <ProtectedRoute>
+              <ActionPlans />
+            </ProtectedRoute>
+
+          } 
+        />
+
+        
         <Route path="*" element={<Navigate to="/" replace />} />
 
       </Routes>

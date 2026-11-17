@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import pool from "./config/db.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
 import liveReadingRoutes from "./routes/liveReadingRoutes.js";
+import recommendationRoutes from "./routes/recommendationRoutes.js";
 import { startLiveDataSimulator } from "./services/liveDataSimulator.js";
 import { startMqttService } from "./services/mqttService.js";
 import { startMqttTestPublisher } from "./services/mqttTestPublisher.js";
@@ -39,6 +40,7 @@ app.get("/", async (req, res) => {
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/live-readings", liveReadingRoutes);
 app.use("/api/forecasting", forecastingRoutes);
+app.use("/api/recommendations", recommendationRoutes);
 
 const PORT = process.env.PORT || 5000;
 

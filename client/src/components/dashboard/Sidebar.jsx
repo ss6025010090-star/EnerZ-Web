@@ -117,13 +117,15 @@ function Sidebar() {
             Action
           </p>
 
-          <button className="menu-item">
-
-            <MdOutlineLightbulb className="icon"/>
-
-            <span>Action Plan</span>
-
-          </button>
+          <NavLink
+            to="/action-plans"
+            className={({ isActive }) =>
+              isActive ? "menu-item active" : "menu-item"
+            }
+          >
+            <MdOutlineLightbulb className="icon" />
+            <span>Action Plans</span>
+          </NavLink>
 
         </div>
 
