@@ -37,7 +37,7 @@ function KPICard({
 
           {value}
 
-          {unit && <span>{unit}</span>}
+          {unit && <span className="kpi-unit">{unit}</span>}
 
         </h2>
 

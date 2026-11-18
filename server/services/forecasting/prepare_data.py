@@ -1,7 +1,7 @@
 
 import pandas as pd
 
-from database import get_database_engine
+from .database import get_database_engine
 
 
 def load_monthly_data():
@@ -11,6 +11,7 @@ def load_monthly_data():
         SELECT
             f."Month",
             e."Period_Start",
+            e."Status",
             f."First_Floor",
             f."Second_Floor",
             f."Total_kWh"
@@ -22,6 +23,8 @@ def load_monthly_data():
     """
 
     df = pd.read_sql(query, engine)
+    print("\nTraining data months:")
+    print(df[["Month", "Period_Start", "Status"]].to_string(index=False))
 
     engine.dispose()
 

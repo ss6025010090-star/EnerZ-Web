@@ -8,6 +8,7 @@ import { getKPI } from "../services/dashboardApi";
 import ChartSwitch from "../components/dashboard/ChartSwitch";
 import ChartTab from "../components/dashboard/ChartTab";
 import TrendChart from "../components/dashboard/TrendChart";
+import UsageTable from "../components/dashboard/UsageTable";
 
 import {
 
@@ -244,7 +245,7 @@ function Dashboard() {
                         selectedMonth={selectedMonth}
                         />
                     )
-                    : <UsageTable />
+                    : <UsageTable selectedYear={selectedYear} />
                 }
             </div>
 

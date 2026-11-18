@@ -4,18 +4,20 @@ import { promisify } from "node:util";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import pool from "../config/db.js";
+
 const execFileAsync = promisify(execFile);
 
-// Get the current controller directory
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Python forecasting paths
+// Python forecasting directory
 const forecastingDir = path.resolve(
   __dirname,
   "../services/forecasting"
 );
 
+// Python virtual environment
 const pythonPath = path.join(
   forecastingDir,
   "venv",
@@ -23,28 +25,68 @@ const pythonPath = path.join(
   "python"
 );
 
-const scriptPath = path.join(
-  forecastingDir,
-  "predict.py"
-);
-
 export const getForecastingData = async (req, res) => {
   try {
-    // Execute the Python forecasting script
+    // 1. Execute Python forecasting model
     const { stdout } = await execFileAsync(
       pythonPath,
-      [scriptPath, "--json"],
+      [
+        "-m",
+        "services.forecasting.predict",
+        "--json"
+      ],
       {
-        cwd: forecastingDir,
+        cwd: path.resolve(forecastingDir, "../.."),
         timeout: 30000,
         maxBuffer: 10 * 1024 * 1024
       }
     );
 
-    // Convert Python JSON output into JavaScript data
+    // 2. Convert Python JSON into JavaScript data
     const forecastData = JSON.parse(stdout);
 
-    res.status(200).json(forecastData);
+    // 3. Get the latest forecast
+    const latestForecast = forecastData.forecast?.[0];
+
+    if (!latestForecast) {
+      return res.status(500).json({
+        message: "No forecasting result was generated."
+      });
+    }
+
+    // 4. Save forecast into PostgreSQL
+    await pool.query(
+      `
+      INSERT INTO electricity_forecasts (
+        forecast_month,
+        first_floor_predicted,
+        second_floor_predicted,
+        total_predicted,
+        predicted_cost,
+        usage_change_percent
+      )
+      VALUES ($1, $2, $3, $4, $5, $6)
+      ON CONFLICT (forecast_month)
+      DO UPDATE SET
+        first_floor_predicted = EXCLUDED.first_floor_predicted,
+        second_floor_predicted = EXCLUDED.second_floor_predicted,
+        total_predicted = EXCLUDED.total_predicted,
+        predicted_cost = EXCLUDED.predicted_cost,
+        usage_change_percent = EXCLUDED.usage_change_percent,
+        created_at = CURRENT_TIMESTAMP
+      `,
+      [
+        latestForecast.Period_Start,
+        latestForecast.First_Floor_Predicted,
+        latestForecast.Second_Floor_Predicted,
+        latestForecast.Total_Predicted,
+        latestForecast.Predicted_Cost,
+        latestForecast.Usage_Change_Percent
+      ]
+    );
+
+    // 5. Return forecast data to React
+    return res.status(200).json(forecastData);
 
   } catch (error) {
     console.error(
@@ -52,8 +94,9 @@ export const getForecastingData = async (req, res) => {
       error.stderr || error
     );
 
-    res.status(500).json({
-      message: "Failed to generate forecasting data."
+    return res.status(500).json({
+      message: "Failed to generate forecasting data.",
+      error: error.message
     });
   }
 };

@@ -1,0 +1,159 @@
+
+.usage-table-container {
+    width: 100%;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 22px;
+    box-sizing: border-box;
+  }
+  
+  
+  
+  .usage-search {
+    width: 320px;
+    max-width: 100%;
+  }
+  
+  .usage-search input {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid #dce1e7;
+    border-radius: 8px;
+    outline: none;
+    font-size: 14px;
+    color: #333;
+    background: #fff;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease;
+  }
+  
+  .usage-search input:focus {
+    border-color: #2563eb;
+  }
+  
+  .usage-search input::placeholder {
+    color: #9ca3af;
+  }
+  
+  
+  
+
+  .usage-record-toolbar {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 16px;
+  }
+  
+  .usage-record-toolbar h3 {
+    font-size: 17px;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0;
+    text-align: left;
+  }
+  
+  .usage-record-toolbar .usage-search {
+    width: 100%;
+    padding: 0 12px;
+    box-sizing: border-box;
+  }
+  
+  .usage-record-toolbar > span {
+    font-size: 13px;
+    color: #6b7280;
+    text-align: right;
+  }
+  
+  /* Table wrapper */
+  .usage-table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+  }
+  
+  /* Table */
+  .usage-table {
+    width: 100%;
+    min-width: 1050px;
+    border-collapse: collapse;
+    text-align: left;
+  }
+  
+  .usage-table thead {
+    background: #f4f6f8;
+  }
+  
+  .usage-table th {
+    padding: 15px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #4b5563;
+    white-space: nowrap;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .usage-table td {
+    padding: 15px 14px;
+    font-size: 13px;
+    color: #374151;
+    white-space: nowrap;
+    border-bottom: 1px solid #f0f1f3;
+  }
+  
+  .usage-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+  
+  .usage-table tbody tr:hover {
+    background: #f9fafb;
+  }
+  
+  /* Loading and empty messages */
+  .usage-message {
+    text-align: center;
+    padding: 35px 10px;
+    color: #6b7280;
+    font-size: 14px;
+  }
+  
+  .usage-error {
+    text-align: center;
+    padding: 35px 10px;
+    color: #dc2626;
+    font-size: 14px;
+  }
+  
+  
+  .usage-table-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 18px;
+  }
+  
+  .usage-table-footer span {
+    font-size: 13px;
+    color: #6b7280;
+  }
+  
+  
+  @media (max-width: 768px) {
+    .usage-table-container {
+      padding: 14px;
+    }
+  
+    .usage-table-header {
+      justify-content: stretch;
+    }
+  
+    .usage-search {
+      width: 100%;
+    }
+  
+    .usage-record-heading h3 {
+      font-size: 15px;
+    }
+  }
+  

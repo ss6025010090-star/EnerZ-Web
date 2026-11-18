@@ -6,7 +6,7 @@ from pathlib import Path
 from xgboost import XGBRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 
-from prepare_data import prepare_data
+from .prepare_data import prepare_data
 
 
 MODEL_DIR = Path(__file__).resolve().parent / "model"
@@ -81,10 +81,13 @@ def train_models():
         y = data[target]
 
         # Walk-forward time series validation
-        time_series_split = TimeSeriesSplit(n_splits=5)
+        time_series_split = TimeSeriesSplit(n_splits=3)
 
-        mae_scores = []
-        rmse_scores = []
+        xgb_mae_scores = []
+        xgb_rmse_scores = []
+
+        baseline_mae_scores = []
+        baseline_rmse_scores = []
 
         for fold, (train_index, test_index) in enumerate(
             time_series_split.split(X), start=1
@@ -95,26 +98,65 @@ def train_models():
             y_train = y.iloc[train_index]
             y_test = y.iloc[test_index]
 
+            # Train XGBoost model
             evaluation_model = create_model()
             evaluation_model.fit(X_train, y_train)
 
             predictions = evaluation_model.predict(X_test)
 
-            mae = mean_absolute_error(y_test, predictions)
-            rmse = np.sqrt(mean_squared_error(y_test, predictions))
+            xgb_mae = mean_absolute_error(y_test, predictions)
+            xgb_rmse = np.sqrt(mean_squared_error(y_test, predictions))
 
-            mae_scores.append(mae)
-            rmse_scores.append(rmse)
+            xgb_mae_scores.append(xgb_mae)
+            xgb_rmse_scores.append(xgb_rmse)
+
+            # Baseline: predict using the previous month's actual usage
+            baseline_predictions = X_test["Lag_1"]
+
+            baseline_mae = mean_absolute_error(
+                y_test, baseline_predictions
+            )
+            baseline_rmse = np.sqrt(
+                mean_squared_error(y_test, baseline_predictions)
+            )
+
+            baseline_mae_scores.append(baseline_mae)
+            baseline_rmse_scores.append(baseline_rmse)
 
             print(f"\nFold {fold}")
             print(f"Training records: {len(X_train)}")
             print(f"Testing records: {len(X_test)}")
-            print(f"MAE: {mae:.4f} kWh")
-            print(f"RMSE: {rmse:.4f} kWh")
+
+            print("\nXGBoost Results:")
+            print(f"MAE: {xgb_mae:.4f} kWh")
+            print(f"RMSE: {xgb_rmse:.4f} kWh")
+
+            print("\nBaseline Results:")
+            print(f"MAE: {baseline_mae:.4f} kWh")
+            print(f"RMSE: {baseline_rmse:.4f} kWh")
 
         print("\nOverall Validation Results")
-        print(f"Average MAE: {np.mean(mae_scores):.4f} kWh")
-        print(f"Average RMSE: {np.mean(rmse_scores):.4f} kWh")
+
+        print("\nXGBoost Average:")
+        print(f"MAE: {np.mean(xgb_mae_scores):.4f} kWh")
+        print(f"RMSE: {np.mean(xgb_rmse_scores):.4f} kWh")
+
+        print("\nBaseline Average:")
+        print(f"MAE: {np.mean(baseline_mae_scores):.4f} kWh")
+        print(f"RMSE: {np.mean(baseline_rmse_scores):.4f} kWh")
+
+        # Compare XGBoost with the baseline
+        xgb_average_mae = np.mean(xgb_mae_scores)
+        baseline_average_mae = np.mean(baseline_mae_scores)
+
+        print("\nModel Comparison:")
+
+        if xgb_average_mae < baseline_average_mae:
+            print("XGBoost performs better than the baseline.")
+        elif xgb_average_mae > baseline_average_mae:
+            print("Baseline performs better than XGBoost.")
+        else:
+            print("Both models have the same MAE.")
 
         # Train final model using all available actual records
         final_model = create_model()

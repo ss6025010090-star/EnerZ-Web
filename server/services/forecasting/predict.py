@@ -1,21 +1,38 @@
+
 import json
 import sys
 from contextlib import redirect_stdout
 from io import StringIO
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
 import numpy as np
 import pandas as pd
 
 from pathlib import Path
 from xgboost import XGBRegressor
 
-from prepare_data import prepare_data
-from train_model import FEATURE_COLUMNS
+from .prepare_data import prepare_data
+from .train_model import FEATURE_COLUMNS
 
 
 MODEL_DIR = Path(__file__).resolve().parent / "model"
 
 ELECTRICITY_RATE = 0.158
-FORECAST_MONTHS = 12
+FORECAST_MONTHS = 1
+TIMEZONE = "Asia/Phnom_Penh"
+
+
+def get_target_month():
+    # Get the current month in Cambodia
+    now = datetime.now(ZoneInfo(TIMEZONE))
+
+    # Always target the first day of the current month
+    return pd.Timestamp(
+        year=now.year,
+        month=now.month,
+        day=1
+    )
 
 
 def load_models():
@@ -31,7 +48,6 @@ def load_models():
     )
 
     return first_floor_model, second_floor_model
-
 
 
 def create_features(history, target_date):
@@ -50,8 +66,7 @@ def create_features(history, target_date):
     }], columns=FEATURE_COLUMNS)
 
 
-
-def forecast_floor(model, df, target, months):
+def forecast_floor(model, df, target, target_date):
     history = pd.DataFrame({
         "Period_Start": df["Period_Start"],
         "Usage": df[target]
@@ -59,8 +74,10 @@ def forecast_floor(model, df, target, months):
 
     predictions = []
 
-    for _ in range(months):
-        # Generate the next month
+    # Predict each missing month until we reach the target month.
+    # Intermediate predictions are used as history only.
+    while history["Period_Start"].iloc[-1] < target_date:
+
         next_date = (
             history["Period_Start"].iloc[-1]
             + pd.DateOffset(months=1)
@@ -78,18 +95,26 @@ def forecast_floor(model, df, target, months):
             "Predicted_Usage": predicted_usage
         })
 
-        # Add prediction to history for the next forecast
+        # Add the prediction to history for the following month
         history.loc[len(history)] = [
             next_date,
             predicted_usage
         ]
 
-    return pd.DataFrame(predictions)
+    # Return only the requested target month's prediction
+    if not predictions:
+        raise ValueError(
+            "The target month must be after the latest historical month."
+        )
+
+    return pd.DataFrame([predictions[-1]])
 
 
 def generate_forecast(df=None):
     if df is None:
         df = prepare_data()
+
+    target_date = get_target_month()
 
     first_model, second_model = load_models()
 
@@ -97,14 +122,14 @@ def generate_forecast(df=None):
         first_model,
         df,
         "First_Floor",
-        FORECAST_MONTHS
+        target_date
     )
 
     second_forecast = forecast_floor(
         second_model,
         df,
         "Second_Floor",
-        FORECAST_MONTHS
+        target_date
     )
 
     forecast = pd.DataFrame({
@@ -122,20 +147,21 @@ def generate_forecast(df=None):
         forecast["Total_Predicted"] * ELECTRICITY_RATE
     )
 
-    # Compare each forecast month with the previous month's usage
+    # Compare the forecast with the latest actual historical usage
     previous_total = float(df["Total_kWh"].iloc[-1])
 
     changes = []
 
     for _, row in forecast.iterrows():
-        change = (
-            (row["Total_Predicted"] - previous_total)
-            / previous_total
-        ) * 100
+        if previous_total > 0:
+            change = (
+                (row["Total_Predicted"] - previous_total)
+                / previous_total
+            ) * 100
+        else:
+            change = 0
 
         changes.append(change)
-
-        previous_total = row["Total_Predicted"]
 
     forecast["Usage_Change_Percent"] = changes
 
@@ -145,51 +171,50 @@ def generate_forecast(df=None):
 
     return forecast
 
+
 def generate_chart_data():
 
     # Load actual monthly data
     actual_df = prepare_data()
 
-    # Get actual data from January to November 2026
-    actual_2026 = actual_df[
-        (actual_df["Period_Start"].dt.year == 2026) &
-        (actual_df["Period_Start"].dt.month <= 11)
+    # Get actual data for the current year
+    current_year = get_target_month().year
+
+    actual_year = actual_df[
+        actual_df["Period_Start"].dt.year == current_year
     ].copy()
 
-    # Generate future predictions using the already loaded dataset
+    # Generate the current month's forecast
     forecast = generate_forecast(actual_df)
 
-    # Get December 2026 prediction
-    december = forecast[
-        forecast["Period_Start"] == pd.Timestamp("2026-12-01")
-    ].iloc[0]
+    target_month = forecast.iloc[0]
 
     # Prepare actual chart data
-    chart_data = actual_2026[
+    chart_data = actual_year[
         ["Period_Start", "Month", "Total_kWh"]
     ].copy()
 
     chart_data = chart_data.rename(
-    columns={"Total_kWh": "Actual_Usage"}
+        columns={"Total_kWh": "Actual_Usage"}
     )
 
     chart_data["Predicted_Usage"] = np.nan
 
-    # Use November actual as the prediction line's starting point
+    # Use the last actual month as the prediction line's starting point
     chart_data.loc[
         chart_data.index[-1], "Predicted_Usage"
     ] = chart_data.iloc[-1]["Actual_Usage"]
 
-    # Add December prediction
-    december_row = pd.DataFrame([{
-        "Period_Start": december["Period_Start"],
-        "Month": december["Month"],
+    # Add the target month's prediction
+    target_month_row = pd.DataFrame([{
+        "Period_Start": target_month["Period_Start"],
+        "Month": target_month["Month"],
         "Actual_Usage": np.nan,
-        "Predicted_Usage": december["Total_Predicted"]
+        "Predicted_Usage": target_month["Total_Predicted"]
     }])
 
     chart_data = pd.concat(
-        [chart_data, december_row],
+        [chart_data, target_month_row],
         ignore_index=True
     )
 
@@ -200,13 +225,12 @@ if __name__ == "__main__":
 
     if "--json" in sys.argv:
 
-        # Suppress diagnostic messages from the forecasting functions
+        # Suppress diagnostic messages from forecasting functions
         with redirect_stdout(StringIO()):
 
             chart_data = generate_chart_data()
             forecast_data = generate_forecast()
 
-        # Convert both DataFrames into JSON-compatible records
         result = {
             "chart": json.loads(
                 chart_data.to_json(
@@ -230,12 +254,21 @@ if __name__ == "__main__":
 
         print("\nAI Forecasting Chart Data")
 
+        forecast_data = generate_forecast()
+
+        forecast_month = forecast_data.iloc[0]["Month"]
+
+        print(f"\n{forecast_month} Forecast")
+
         print(
-            chart_data[
+            forecast_data[
                 [
                     "Month",
-                    "Actual_Usage",
-                    "Predicted_Usage"
+                    "First_Floor_Predicted",
+                    "Second_Floor_Predicted",
+                    "Total_Predicted",
+                    "Predicted_Cost",
+                    "Usage_Change_Percent"
                 ]
             ].round(2).to_string(index=False)
         )
