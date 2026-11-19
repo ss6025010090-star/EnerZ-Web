@@ -120,9 +120,8 @@ def collect_daily_readings(floor_number):
 
     readings = get_recent_floor_readings(
         floor_number,
-        limit=100000
+        days=30
     )
-
     daily_groups = defaultdict(list)
 
     for reading in readings:

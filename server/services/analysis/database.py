@@ -4,9 +4,11 @@ from sqlalchemy import text
 from services.forecasting.database import get_database_engine
 
 
-def get_recent_floor_readings(floor_number, limit=1000):
+
+def get_recent_floor_readings(floor_number, days=30):
     """
-    Retrieve recent energy readings for a specific floor.
+    Retrieve energy readings for a specific floor
+    within the last specified number of days.
     """
 
     engine = get_database_engine()
@@ -23,8 +25,8 @@ def get_recent_floor_readings(floor_number, limit=1000):
             meter_energy
         FROM floor_live_readings
         WHERE floor_number = :floor_number
-        ORDER BY recorded_at DESC
-        LIMIT :limit
+          AND recorded_at >= NOW() - (:days * INTERVAL '1 day')
+        ORDER BY recorded_at ASC
     """)
 
     with engine.connect() as connection:
@@ -32,11 +34,12 @@ def get_recent_floor_readings(floor_number, limit=1000):
             query,
             {
                 "floor_number": floor_number,
-                "limit": limit
+                "days": days
             }
         )
 
         return [dict(row._mapping) for row in result]
+
 
 
 def get_recent_light_readings(floor_number, limit=1000):

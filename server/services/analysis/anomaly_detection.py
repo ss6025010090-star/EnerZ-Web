@@ -28,7 +28,7 @@ def detect_meter_anomalies(floor_number):
 
     readings = get_recent_floor_readings(
         floor_number,
-        limit=100000
+        days=30
     )
 
     # Database results are newest first.
