@@ -178,6 +178,47 @@
     color: #263238;
     font-size: 16px;
   }
+
+  
+.floor-bar-section,
+.floor-chart-card {
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+
+.floor-bar-section:hover,
+.floor-chart-card:hover {
+  transform: translateY(-3px);
+  border-color: #BFDBFE;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+}
+
+
+.floor-usage-item {
+  border-radius: 8px;
+  padding-left: 8px;
+  padding-right: 8px;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.floor-usage-item:hover {
+  background-color: #F1F7FE;
+  transform: translateX(3px);
+}
+
+
+.top-floor-content h2 {
+  transition: color 0.2s ease;
+}
+
+.top-floor-card:hover .top-floor-content h2 {
+  color: #16A36A;
+}
   
   @media (max-width: 900px) {
     .floor-charts {

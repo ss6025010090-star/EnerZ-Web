@@ -3,8 +3,6 @@ import { getTrends } from "../../services/dashboardApi";
 import { MdBolt, MdAttachMoney } from "react-icons/md";
 
 import {
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -128,7 +126,36 @@ function TrendChart({ selectedYear, selectedMonth }) {
 
               <YAxis />
 
-              <Tooltip />
+              <Tooltip
+                cursor={{
+                  stroke: "#94A3B8",
+                  strokeWidth: 1,
+                  strokeDasharray: "5 5"
+                }}
+                contentStyle={{
+                  backgroundColor: "#FFFFFF",
+                  border: "1px solid #E2E8F0",
+                  borderRadius: "12px",
+                  padding: "12px 16px",
+                  boxShadow: "0 8px 24px rgba(15, 23, 42, 0.12)"
+                }}
+                labelStyle={{
+                  color: "#64748B",
+                  fontSize: "12px",
+                  fontWeight: 600,
+                  marginBottom: "6px"
+                }}
+                itemStyle={{
+                  color: "#1565C0",
+                  fontSize: "14px",
+                  fontWeight: 700
+                }}
+                formatter={(value) => [
+                  `${Number(value).toLocaleString()} kWh`,
+                  "Electricity Usage"
+                ]}
+                labelFormatter={(label) => `Month: ${label}`}
+              />
 
               <Area
                 type="monotone"
@@ -136,19 +163,14 @@ function TrendChart({ selectedYear, selectedMonth }) {
                 stroke="#5B9BD5"
                 fill="#DCEAF7"
                 strokeWidth={3}
-              />
-
-              <Line
-                type="monotone"
-                dataKey="total_kwh"
-                stroke="#5B9BD5"
-                strokeWidth={3}
-                dot={{
-                  r: 4
-                }}
+                dot={false}
                 activeDot={{
-                  r: 6
+                  r: 7,
+                  fill: "#FFFFFF",
+                  stroke: "#2563EB",
+                  strokeWidth: 3
                 }}
+                activeDotAnimation={false}
               />
 
             </AreaChart>
@@ -201,7 +223,39 @@ function TrendChart({ selectedYear, selectedMonth }) {
 
               <YAxis />
 
-              <Tooltip />
+              <Tooltip
+                cursor={{
+                  stroke: "#94A3B8",
+                  strokeWidth: 1,
+                  strokeDasharray: "5 5"
+                }}
+                contentStyle={{
+                  backgroundColor: "#FFFFFF",
+                  border: "1px solid #E2E8F0",
+                  borderRadius: "12px",
+                  padding: "12px 16px",
+                  boxShadow: "0 8px 24px rgba(15, 23, 42, 0.12)"
+                }}
+                labelStyle={{
+                  color: "#64748B",
+                  fontSize: "12px",
+                  fontWeight: 600,
+                  marginBottom: "6px"
+                }}
+                itemStyle={{
+                  color: "#2E7D32",
+                  fontSize: "14px",
+                  fontWeight: 700
+                }}
+                formatter={(value) => [
+                  `$${Number(value).toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                  })}`,
+                  "Electricity Cost"
+                ]}
+                labelFormatter={(label) => `Month: ${label}`}
+              />
 
               <Area
                 type="monotone"
@@ -209,19 +263,14 @@ function TrendChart({ selectedYear, selectedMonth }) {
                 stroke="#4F8A38"
                 fill="#E5F0E1"
                 strokeWidth={3}
-              />
-
-              <Line
-                type="monotone"
-                dataKey="expense"
-                stroke="#4F8A38"
-                strokeWidth={3}
-                dot={{
-                  r: 4
-                }}
+                dot={false}
                 activeDot={{
-                  r: 6
+                  r: 7,
+                  fill: "#FFFFFF",
+                  stroke: "#2E7D32",
+                  strokeWidth: 3
                 }}
+                activeDotAnimation={false}
               />
 
             </AreaChart>

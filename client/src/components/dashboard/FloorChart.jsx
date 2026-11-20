@@ -92,8 +92,29 @@ function FloorChart({ selectedMonth }) {
             <XAxis dataKey="name" />
             <YAxis />
             <Tooltip
-                cursor={false}
-                formatter={(value) => `${Number(value).toLocaleString()} kWh`}
+              cursor={false}
+              contentStyle={{
+                backgroundColor: "#FFFFFF",
+                border: "1px solid #E2E8F0",
+                borderRadius: "12px",
+                padding: "12px 16px",
+                boxShadow: "0 8px 24px rgba(15, 23, 42, 0.12)"
+              }}
+              labelStyle={{
+                color: "#64748B",
+                fontSize: "12px",
+                fontWeight: 600,
+                marginBottom: "6px"
+              }}
+              itemStyle={{
+                color: "#2563EB",
+                fontSize: "14px",
+                fontWeight: 700
+              }}
+              formatter={(value) => [
+                `${Number(value).toLocaleString()} kWh`,
+                "Electricity Usage"
+              ]}
             />
             <Bar
                 dataKey="usage"
@@ -119,18 +140,24 @@ function FloorChart({ selectedMonth }) {
           <div className="floor-distribution-content">
             <ResponsiveContainer width="100%" height={280}>
             <PieChart>
-                <Pie
-                    data={chartData}
-                    dataKey="usage"
-                    nameKey="name"
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={65}
-                    outerRadius={100}
-                    paddingAngle={2}
-                >
+            <Pie
+              data={chartData}
+              dataKey="usage"
+              nameKey="name"
+              cx="50%"
+              cy="50%"
+              innerRadius={65}
+              outerRadius={100}
+              paddingAngle={4}
+              animationDuration={500}
+            >
                     {chartData.map((entry, index) => (
-                    <Cell key={entry.name} fill={colors[index]} />
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={colors[index]}
+                        stroke="#FFFFFF"
+                        strokeWidth={3}
+                      />
                     ))}
 
                     <Label
@@ -172,7 +199,23 @@ function FloorChart({ selectedMonth }) {
                     }}
                     />
                 </Pie>
-                <Tooltip />
+                <Tooltip
+                  formatter={(value) => [
+                    `${Number(value).toLocaleString()} kWh`,
+                    "Electricity Usage"
+                  ]}
+                  contentStyle={{
+                    backgroundColor: "#FFFFFF",
+                    border: "1px solid #E5E7EB",
+                    borderRadius: "10px",
+                    padding: "10px 14px",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.08)"
+                  }}
+                  itemStyle={{
+                    color: "#2563EB",
+                    fontWeight: 600
+                  }}
+                />
             </PieChart>
             </ResponsiveContainer>
     

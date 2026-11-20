@@ -24,7 +24,8 @@ import {
   Tooltip,
   PieChart,
   Pie,
-  Cell
+  Cell,
+  Sector
 } from "recharts";
 
 import "../styles/dashboard.css";
@@ -86,6 +87,7 @@ function AIForecasting() {
   const [forecastData, setForecastData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [activeFloor, setActiveFloor] = useState(null);
 
   // Fetch forecasting data from backend
   useEffect(() => {
@@ -272,9 +274,7 @@ function AIForecasting() {
             <div className="forecast-chart-header">
               <div>
                 <h3>Electricity Usage Forecast</h3>
-                <p>
-                  Compare actual electricity consumption with AI predictions.
-                </p>
+                
               </div>
 
               <span className="forecast-chart-period">
@@ -393,35 +393,86 @@ function AIForecasting() {
 
               
 
-              <div className="floor-donut-chart">
+            <div
+              className="floor-donut-chart"
+              onMouseLeave={() => setActiveFloor(null)}
+            >
                 {totalFloorUsage > 0 ? (
                   <>
                     <ResponsiveContainer width="100%" height={280}>
                       <PieChart>
-                        <Pie
-                          data={floorDistribution}
-                          dataKey="value"
-                          nameKey="name"
-                          cx="50%"
-                          cy="50%"
-                          innerRadius={75}
-                          outerRadius={105}
-                          paddingAngle={4}
-                        >
-                          {floorDistribution.map((floor, index) => (
-                            <Cell
-                              key={floor.name}
-                              fill={FLOOR_COLORS[index]}
-                            />
-                          ))}
-                        </Pie>
+                        
+                      <Pie
+                        data={floorDistribution}
+                        dataKey="value"
+                        nameKey="name"
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={75}
+                        outerRadius={105}
+                        paddingAngle={4}
+                        activeIndex={activeFloor}
+                        activeShape={(props) => {
+                          const {
+                            cx,
+                            cy,
+                            innerRadius,
+                            outerRadius,
+                            startAngle,
+                            endAngle,
+                            fill
+                          } = props;
 
-                        <Tooltip
-                          formatter={(value) => [
-                            `${formatNumber(value)} kWh`,
-                            "Predicted Usage"
-                          ]}
-                        />
+                          return (
+                            <Sector
+                              cx={cx}
+                              cy={cy}
+                              innerRadius={innerRadius}
+                              outerRadius={outerRadius + 7}
+                              startAngle={startAngle}
+                              endAngle={endAngle}
+                              fill={fill}
+                              stroke="#FFFFFF"
+                              strokeWidth={3}
+                            />
+                          );
+                        }}
+                        onMouseEnter={(_, index) => setActiveFloor(index)}
+                      >
+                        {floorDistribution.map((floor, index) => (
+                          <Cell
+                            key={floor.name}
+                            fill={FLOOR_COLORS[index]}
+                            stroke="#FFFFFF"
+                            strokeWidth={3}
+                          />
+                        ))}
+                      </Pie>
+
+
+                      <Tooltip
+                        cursor={false}
+                        formatter={(value, name) => [
+                          `${formatNumber(value)} kWh`,
+                          name
+                        ]}
+                        contentStyle={{
+                          backgroundColor: "#FFFFFF",
+                          border: "1px solid #E5E7EB",
+                          borderRadius: "12px",
+                          padding: "12px 16px",
+                          boxShadow: "0 6px 18px rgba(15, 23, 42, 0.10)"
+                        }}
+                        labelStyle={{
+                          color: "#64748B",
+                          fontSize: "12px"
+                        }}
+                        itemStyle={{
+                          color: "#263238",
+                          fontSize: "13px",
+                          fontWeight: 700
+                        }}
+                      />
                       </PieChart>
                     </ResponsiveContainer>
 
@@ -445,8 +496,12 @@ function AIForecasting() {
               <div className="floor-distribution-details">
                 {floorDistribution.map((floor, index) => (
                   <div
-                    className="floor-distribution-item"
+                    className={`floor-distribution-item ${
+                      activeFloor === index ? "active" : ""
+                    }`}
                     key={floor.name}
+                    onMouseEnter={() => setActiveFloor(index)}
+                    onMouseLeave={() => setActiveFloor(null)}
                   >
                     <div className="floor-distribution-info">
                       <div className="floor-name">

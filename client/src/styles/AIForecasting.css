@@ -243,6 +243,13 @@
 
 .floor-distribution-item {
   width: 100%;
+  padding: 12px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease;
 }
 
 .floor-distribution-info {
@@ -287,7 +294,7 @@
 .floor-progress-fill {
   height: 100%;
   border-radius: 10px;
-  transition: width 0.3s ease;
+  transition: width 0.5s ease;
 }
 
 .floor-distribution-note {
@@ -410,6 +417,33 @@
     box-shadow: none;
     border-radius: 0;
   }
+
+
+/* Floor distribution hover effects */
+
+.floor-distribution-item:hover,
+.floor-distribution-item.active {
+  background-color: #F8FAFC;
+  border-color: #E2E8F0;
+  transform: translateX(3px);
+}
+
+.floor-color-dot {
+  transition: transform 0.25s ease;
+}
+
+.floor-distribution-item:hover .floor-color-dot,
+.floor-distribution-item.active .floor-color-dot {
+  transform: scale(1.25);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floor-distribution-item,
+  .floor-progress-fill,
+  .floor-color-dot {
+    transition: none;
+  }
+}
 
 
 
