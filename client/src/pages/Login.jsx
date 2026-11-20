@@ -4,7 +4,7 @@ import { supabase } from "../config/supabaseClient";
 import { FcGoogle } from "react-icons/fc";
 import { FiShield } from "react-icons/fi";
 import { useSearchParams } from "react-router-dom";
-import "../styles/login.css";
+import "../styles/Login.css";
 
 function Login() {
   const [loading, setLoading] = useState(false);
