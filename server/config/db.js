@@ -21,6 +21,17 @@ const poolConfig = process.env.DATABASE_URL
       password: process.env.DB_PASSWORD,
     };
 
-const pool = new Pool(poolConfig);
+const pool = new Pool({
+  ...poolConfig,
+  max: 10,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 10000,
+  keepAlive: true,
+});
+
+// Handle unexpected errors on idle database connections
+pool.on("error", (error) => {
+  console.error("Unexpected PostgreSQL connection error:", error);
+});
 
 export default pool;
