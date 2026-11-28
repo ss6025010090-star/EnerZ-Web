@@ -129,54 +129,76 @@ export const startMqttService = () => {
     }
 
 
-        const dbClient = await pool.connect();
+    let dbClient;
+    let dbClientHasError = false;
 
-        try {
-          await dbClient.query("BEGIN");
-        
-          const result = await dbClient.query(
-            `INSERT INTO floor_live_readings
-            (floor_number, voltage, current, total_power, energy_today, meter_energy)
-            VALUES ($1, $2, $3, $4, $5, $6)
-            RETURNING id`,
+    try {
+      dbClient = await pool.connect();
+
+      dbClient.on("error", (clientError) => {
+        dbClientHasError = true;
+
+        console.error(
+          "PostgreSQL client connection error:",
+          clientError.message
+        );
+      });
+    
+      await dbClient.query("BEGIN");
+    
+      const result = await dbClient.query(
+        `INSERT INTO floor_live_readings
+        (floor_number, voltage, current, total_power, energy_today, meter_energy)
+        VALUES ($1, $2, $3, $4, $5, $6)
+        RETURNING id`,
+        [
+          data.floorNumber,
+          data.voltage,
+          data.current,
+          totalPower,
+          floorData.energyToday,
+          data.energy,
+        ]
+      );
+    
+      if (Array.isArray(data.lights)) {
+        for (const light of data.lights) {
+          await dbClient.query(
+            `INSERT INTO light_readings
+            (reading_id, device_code, status, power)
+            VALUES ($1, $2, $3, $4)`,
             [
-                data.floorNumber,
-                data.voltage,
-                data.current,
-                totalPower,
-                floorData.energyToday,
-                data.energy,
+              result.rows[0].id,
+              light.deviceCode,
+              light.status,
+              light.status === "ON" ? light.power : 0,
             ]
           );
-          // Save simulated light readings.
-            if (Array.isArray(data.lights)) {
-                for (const light of data.lights) {
-                await dbClient.query(
-                    `INSERT INTO light_readings
-                    (reading_id, device_code, status, power)
-                    VALUES ($1, $2, $3, $4)`,
-                    [
-                    result.rows[0].id,
-                    light.deviceCode,
-                    light.status,
-                    light.status === "ON" ? light.power : 0,
-                    ]
-                );
-                }
-            }
-        
-          await dbClient.query("COMMIT");
-        
-          console.log(
-            `Floor ${data.floorNumber}: Reading saved successfully!`
-          );
-        
-        } catch (error) {
-          await dbClient.query("ROLLBACK");
-          console.error("Error saving MQTT reading:", error);
-        } finally {
-            dbClient.release();
         }
+      }
+    
+      await dbClient.query("COMMIT");
+    
+      console.log(
+        `Floor ${data.floorNumber}: Reading saved successfully!`
+      );
+    
+    } catch (error) {
+      if (dbClient) {
+        try {
+          await dbClient.query("ROLLBACK");
+        } catch (rollbackError) {
+          console.error("Rollback failed:", rollbackError.message);
+        }
+      }
+    
+      console.error("Error saving MQTT reading:", error.message);
+    
+    } finally {
+      if (dbClient) {
+        dbClient.release(dbClientHasError);
+      }
+    }
   
     } catch (error) {
       console.error("Error processing MQTT message:", error.message);
